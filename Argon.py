@@ -1,141 +1,137 @@
 import tkinter as tk
+import re
 
 class PDA:
     def __init__(self):
         self.stack = ['#']
         self.state = 'start'
         self.transitions = {
-            # Declaración de variables
-            ('start', 'A', '#'): ('process_TV', 'E'),
-            ('process_TV', 'E', 'E#'): ('accept', ''),
-            ('E', 'I', 'E'): ('process_I', 'DV'),
-            ('DV', 'NV', 'DV'): ('process_NV', 'PV'),
-            ('DV', 'PV', 'DV'): ('process_PV', 'DP'),
-            ('NV', 'L', 'NV'): ('process_L', 'NV'),
-            ('NV', 'L', 'L'): ('process_L', 'RL'),
-            ('PV', 'DP', 'PV'): ('process_DP', 'O'),
-            ('O', 'L', 'O'): ('process_L', 'RL'),
-            ('O', 'L', 'L'): ('process_L', 'RL'),
-            ('O', 'D', 'O'): ('process_D', 'RD'),
-            ('O', 'D', 'P'): ('process_P', 'D'),
-            ('O', 'C1', 'O'): ('accept', ''),
-            ('O', 'C2', 'O'): ('accept', ''),
+            ('start', 'TV', '#'): ('A', 'E'),
+            ('A', 'I', 'E'): ('E', 'DV'),
+            ('E', 'NV', 'DV'): ('DV', 'PV'),
+            ('DV', 'DP', 'PV'): ('PV', 'Z'),
+            ('DV', 'L', 'NV'): ('NV', ''),
+            ('DV', 'L', 'RL_NV'): ('NV', 'RL'),
+            ('PV', 'L', 'Z'): ('Z', 'RL'),
+            ('PV', 'D', 'Z'): ('Z', 'RD'),
+            ('PV', 'true', 'Z'): ('Z', ''),
+            ('PV', 'false', 'Z'): ('Z', ''),
+            ('start', 'TN', 'TV'): ('TV', ''),
+            ('start', 'TL', 'TV'): ('TV', ''),
+            ('TV', 'B1', 'TN'): ('TN', ''),
+            ('TV', 'B2', 'TN'): ('TN', ''),
+            ('TN', 'int', 'B1'): ('B1', ''),
+            ('TN', 'float', 'B2'): ('B2', ''),
+            ('TV', 'LC', 'TL'): ('TL', ''),
+            ('TV', 'LV', 'TL'): ('TL', ''),
+            ('TL', 'F1', 'LC'): ('LC', ''),
+            ('TL', 'F2', 'LC'): ('LC', ''),
+            ('LC', 'string', 'F1'): ('F1', ''),
+            ('LC', 'bool', 'F2'): ('F2', ''),
+            ('TL', 'char', 'LV'): ('LV', ''),
+            ('DPD', '.', 'P'): ('P', ''),
+            ('PV', ':', 'DP'): ('DP', ''),
+            ('E', '=', 'I'): ('I', ''),
+            ('NV', '[a-z]', 'L'): ('L', ''),
+            ('NV', '[A-Z]', 'L'): ('L', ''),
+            ('Z', '[1-9]', 'D'): ('D', ''),
+            ('Z', '0', 'B'): ('B', ''),
+            ('B', 'true', 'C1'): ('C1', ''),
+            ('B', 'false', 'C2'): ('C2', ''),
+            ('NV', 'L', 'RL'): ('RL', 'RL')
+        }
+        self.log = []
+
+    def interpret_input(self, user_input):
+        patterns = {
+            # Declaraciones de tipo
+            r'^int\s+[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*\d+\s*;$': ['TV', 'TL', 'LV', 'int', 'I', '=', 'NV', 'L', 'DP', ':', 'Z', 'D', 'RD'],
+            r'^float\s+[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*\d+\.\d*\s*;$': ['TV', 'TL', 'LV', 'float', 'I', '=', 'NV', 'L', 'DP', ':', 'Z', 'D', 'DPD', 'Z', 'D', 'RD'],
+            r'^string\s+[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*".*"\s*;$': ['TV', 'TL', 'LV', 'string', 'I', '=', 'NV', 'L', 'DP', ':', 'Z', 'F1'],
+            r'^bool\s+[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*(true|false)\s*;$': ['TV', 'TL', 'LV', 'bool', 'I', '=', 'NV', 'L', 'DP', ':', 'Z', 'C1'],
+            r"^char\s+[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*'.{1}'\s*;$": ['TV', 'TL', 'LV', 'char', 'I', '=', 'NV', 'L', 'DP', ':', 'Z', 'L', 'RL'],
 
             # Funciones
-            ('start', 'IN', '#'): ('process_DF', 'RD'),
-            ('process_DF', 'RD', 'RD'): ('process_L', 'G1'),
-            ('G1', 'RL', 'G1'): ('process_L', 'RL'),
-            ('G1', 'L', 'G1'): ('process_L', 'RL'),
-            ('G1', 'PA', 'G1'): ('process_PA', 'G2'),
-            ('G2', 'PC', 'G2'): ('process_PC', 'G3'),
-            ('G3', 'DP', 'G3'): ('process_DP', 'G4'),
-            ('G4', 'DP', 'G4'): ('process_DP', 'G5'),
-            ('G5', 'LA', 'G5'): ('process_LA', 'G6'),
-            ('G6', 'LC', 'G6'): ('process_LC', ''),
+            r'^Fn\s+[a-zA-Z_][a-zA-Z0-9_]*\(\)\s*:\s*\{.*\}$': ['DF', 'Fn', 'RD', 'L', 'G1', 'RL', 'G2', 'PA', 'G3', 'PC', 'G4', 'DP', 'G5', 'LA', 'G6', 'CO', 'LC'],
 
-            # Condicional
-            ('start', 'IN', '#'): ('process_I', 'R'),
-            ('process_I', 'R', 'R'): ('process_C', 'J1'),
-            ('J1', 'DP', 'J1'): ('process_DP', 'J2'),
-            ('J2', 'LA', 'J2'): ('process_LA', 'J3'),
-            ('J3', 'CO', 'J3'): ('process_CO', 'J4'),
-            ('J4', 'LC', 'J4'): ('process_LC', 'E'),
-            ('C', 'L', 'C'): ('process_L', 'K1'),
-            ('K1', 'RL', 'K1'): ('process_RL', 'K2'),
-            ('K2', 'O', 'K2'): ('process_O', 'OP'),
-            ('OP', 'D', 'OP'): ('process_D', 'RD'),
-            ('OP', 'C1', 'OP'): ('accept', ''),
-            ('OP', 'C2', 'OP'): ('accept', ''),
-            ('OP', 'L', 'OP'): ('process_L', 'RL'),
+            # Condiciones
+            r'^assuming\s+.*:\s*{\s*if\s*\(.*\)\s*{\s*.*\s*}\s*else\s*{\s*.*\s*}.*}\s*;\s*otherwise:\s*{\s*.*\s*}\s*;$': ['I', 'assuming', 'L', 'RL', 'C', 'L', 'K1', 'RL', 'O', 'RL', 'J1', 'RP', 'J2', 'DP', 'J3', 'LC', 'E', 'O1', 'otherwise', 'M1', 'DP', 'M2', 'LA', 'M3', 'CO', 'LC'],
 
-            # Ciclo
-            ('start', 'IN', '#'): ('process_Ci', 'R'),
-            ('process_Ci', 'R', 'R'): ('process_PA', 'CA'),
-            ('CA', 'NA', 'CA'): ('process_NA', 'IC'),
-            ('NA', 'LL', 'NA'): ('process_LL', 'NO'),
-            ('LL', 'L', 'LL'): ('process_L', 'RL'),
-            ('NO', 'O', 'NO'): ('process_O', 'OP'),
-            ('IC', 'DP', 'IC'): ('process_DP', 'DC'),
-            ('DC', 'LA', 'DC'): ('process_LA', 'DF'),
-            ('DF', 'CO', 'DF'): ('process_CO', 'LC'),
-
-            # Terminales y no terminales individuales
-            ('start', 'TV', '#'): ('accept', ''),
-            ('TV', 'TN', 'TV'): ('process_TN', ''),
-            ('TN', 'B1', 'TN'): ('accept', ''),
-            ('TN', 'B2', 'TN'): ('accept', ''),
-            ('TV', 'TL', 'TV'): ('process_TL', ''),
-            ('TL', 'LC', 'TL'): ('process_LC', ''),
-            ('TL', 'LV', 'TL'): ('process_LV', ''),
-            ('LC', 'F1', 'LC'): ('accept', ''),
-            ('LC', 'F2', 'LC'): ('accept', ''),
-            ('LV', 'char', 'LV'): ('accept', ''),
-            ('P', '.', 'P'): ('accept', ''),
-            ('DP', ':', 'DP'): ('accept', ''),
-            ('I', '=', 'I'): ('accept', ''),
-            ('L', 'a...z', 'L'): ('accept', ''),
-            ('L', 'A...Z', 'L'): ('accept', ''),
-            ('D', '0...9', 'D'): ('accept', ''),
-            ('B', 'C1', 'B'): ('accept', ''),
-            ('B', 'C2', 'B'): ('accept', ''),
-            ('RL', 'L', 'RL'): ('process_L', 'RL'),
-            ('RL', 'ε', 'RL'): ('accept', ''),
-            ('RD', 'D', 'RD'): ('process_D', 'RD'),
-            ('RD', 'ε', 'RD'): ('accept', ''),
-            ('PD', 'RD', 'PD'): ('accept', ''),
-            ('DPD', 'D', 'DPD'): ('process_D', 'RD')
+            # Ciclos
+            r'^loop\s*\(\s*[a-zA-Z]\s*=\s*\d+\s*;\s*[a-zA-Z]\s*[<>=!]{1,2}\s*\d+\s*;\s*[a-zA-Z]\s*[+\-*/%]?=\s*[+\-*/%]?\s*\d+\s*\)\s*:\s*{\s*.*\s*}': ['IN', 'CI', 'loop', 'R', 'PA', 'NV', 'L', 'DP', ':', 'Z', 'D', 'RD', 'PC', 'CA', 'NV', 'LL', 'O', 'RL', 'NO', 'NV', 'L', 'RL', 'OP', 'D', 'RD', 'NA', 'DP', 'RL', 'LL', 'O', 'RL', 'DC', 'LA', 'DF', 'CO', 'LC']
         }
-        self.log = ""
 
-    def process_input(self, input_string):
-        for symbol in input_string.split():
-            while True:
-                if len(self.stack) == 0:
-                    self.log += f"Error: Pila vacía en el estado {self.state}\n"
-                    return False
-                top_stack = self.stack.pop()
-                if (self.state, symbol, top_stack) in self.transitions:
-                    new_state, to_stack = self.transitions[(self.state, symbol, top_stack)]
-                    self.log += f"Transición: {self.state} + {symbol}/{top_stack} -> {new_state}/{to_stack}\n"
-                    self.state = new_state
-                    for s in reversed(to_stack):
-                        if s != '':
-                            self.stack.append(s)
-                    break
-                else:
-                    self.log += f"Error: Transición no válida desde {self.state} con {symbol}/{top_stack}\n"
-                    return False
+        for pattern, tokens in patterns.items():
+            if re.fullmatch(pattern, user_input):
+                return tokens
+        return None
+    
+    def process_input(self, token_sequence):
+        if token_sequence is None:
+            self.log.append("Entrada no reconocida.")
+            return False
+
+        for token in token_sequence:
+            if len(self.stack) == 0:
+                self.log.append("Error: Pila vacía.")
+                return False
+
+            top_stack = self.stack.pop()
+
+            if (self.state, token, top_stack) in self.transitions:
+                new_state, to_stack = self.transitions[(self.state, token, top_stack)]
+                self.log.append(f"Transición: ({self.state}, {token}, {top_stack}) -> ({new_state}, {to_stack})")
+                self.state = new_state
+                for s in reversed(to_stack):
+                    if s != '':
+                        self.stack.append(s)
+            else:
+                self.log.append(f"Error: Transición no válida desde {self.state} con {token}/{top_stack}")
+                return False
+
         return self.state == 'accept'
+    
+    def get_stack_string(self):
+        return ' '.join(reversed(self.stack))
 
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title('Autómata con Pila')
+        self.pda = PDA()
+        self.title('Autómata con Pila - Validador de Gramática')
         self.create_widgets()
 
     def create_widgets(self):
         self.input_label = tk.Label(self, text="Ingrese la cadena:")
         self.input_label.pack()
 
-        self.input_entry = tk.Entry(self)
-        self.input_entry.pack()
+        self.input_text = tk.Text(self, height=4, width=50)
+        self.input_text.pack()
 
         self.validate_button = tk.Button(self, text="Validar", command=self.validate)
         self.validate_button.pack()
+
+        self.show_stack_button = tk.Button(self, text="Mostrar Pila", command=self.show_pda_stack)
+        self.show_stack_button.pack()
+
+        self.result_label = tk.Label(self, text="", fg="red")
+        self.result_label.pack()
 
         self.log_text = tk.Text(self, height=10, width=50)
         self.log_text.pack()
 
     def validate(self):
-        pda = PDA()
-        input_string = self.input_entry.get()
-        valid = pda.process_input(input_string)
-        self.log_text.delete(1.0, tk.END)
-        self.log_text.insert(tk.END, pda.log)
-        if valid:
-            self.log_text.insert(tk.END, "Cadena aceptada.")
-        else:
-            self.log_text.insert(tk.END, "Cadena rechazada.")
+        user_input = self.input_text.get("1.0", "end-1c").strip()
+        token_sequence = self.pda.interpret_input(user_input)
+        valid = self.pda.process_input(token_sequence)
+        self.result_label.config(text="Cadena aceptada." if valid else "Cadena no aceptada.")
+        self.log_text.delete("1.0", tk.END)
+        self.log_text.insert(tk.END, '\n'.join(self.pda.log) + "\n")
+
+    def show_pda_stack(self):
+        self.log_text.delete("1.0", tk.END)
+        stack_contents = self.pda.get_stack_string()
+        self.log_text.insert(tk.END, "Contenido actual de la pila basado en la entrada:\n" + stack_contents)
 
 app = Application()
 app.mainloop()
