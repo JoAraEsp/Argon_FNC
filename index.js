@@ -422,16 +422,39 @@ class Stack {
   
   let arr;
   let result;
+
+    function tokenize(input) {
+        const tokens = [];
+        const keywords = ["int", "string", "float", "bool", "char", "true", "false", "assuming"];
+        const delimiters = [" ", ";", "=", "{", "}", "(", ")", ".", ":"];
+        let currentToken = "";
+
+        for (let i = 0; i < input.length; i++) {
+            if (delimiters.includes(input[i])) {
+                if (currentToken.trim()) {
+                    tokens.push(currentToken.trim());
+                }
+                currentToken = "";
+            } else {
+                currentToken += input[i];
+            }
+        }
+
+        if (currentToken.trim()) {
+            tokens.push(currentToken.trim());
+        }
+
+        return tokens;
+    }
+
   
   function validate() {
     stack.clear();
     let str = document.getElementById("textarea").value;
-    arr = str.split(''); // Convertir la cadena de entrada en un array de caracteres
-
+    arr = tokenize('str'); 
     let option = document.getElementById("option").value;
     let result = false;
 
-    // Iniciar con la regla correcta según la opción seleccionada
     switch (option) {
         case "Variable":
             stack.push("A"); 
@@ -454,18 +477,16 @@ class Stack {
             return;
     }
 
-    // Mostrar resultado de la validación
     if (result) {
         alert("Es una cadena válida");
     } else {
         alert("No es una cadena válida");
     }
 
-    paint(); // Actualizar visualización de la pila
+    paint(); 
 }
 
-  
-  function variable() {
+    function variable() {
         console.log(arr);
         stack.push("DV");
 
@@ -473,65 +494,64 @@ class Stack {
             let current = stack.pop();
             let rule = map.get(current);
 
-            if (typeof rule === 'object') { // Si es un símbolo no terminal
+            if (typeof rule === 'object') {
                 for (const key in rule) {
-                    stack.push(rule[key]); // Añade sus producciones a la pila
+                    stack.push(rule[key]);
                 }
-            } else if (current === "L" || current === "D") { // Para los casos de letras y dígitos
+            } else if (current === "L" || current === "D") {
                 let nextChar = arr.shift();
-                if ((current === "L" && !letters.includes(nextChar)) || 
+                if ((current === "L" && !letters.includes(nextChar)) ||
                     (current === "D" && !numbers.includes(nextChar))) {
                     return false;
                 }
             } else if (current === "=" || current === ":" || current === "int" || 
                     current === "float" || current === "string" || current === "bool" || 
-                    current === "char" || current === "true" || current === "false") { // Símbolos terminales específicos
+                    current === "char" || current === "true" || current === "false") {
                 let nextChar = arr.shift();
                 if (nextChar !== current) {
                     return false;
                 }
-            } else if (typeof rule === 'string' || rule instanceof RegExp) { 
+            } else if (current === ";") {
+                return arr.length === 0;
+            } else if (rule instanceof RegExp) {
                 let nextChar = arr.shift();
-                if (rule instanceof RegExp) {
-                    if (!rule.test(nextChar)) {
-                        return false;
-                    } else {
-                        if (nextChar !== rule) {
-                            return false;
-                        }
-                    }
-                } else {
+                if (!rule.test(nextChar)) {
                     return false;
                 }
+            } else if (current === " ") {
+                continue;
+            } else {
+                return false;
             }
         }
 
-        return arr.length === 0 && stack.isEmpty(); 
+        return arr.length === 0 && stack.isEmpty();
     }
 
+
+
     function structControl() {
-        stack.push("R");  // Inicia con la regla para estructura de control
-    
+        stack.push("R");  
         while (!stack.isEmpty() && arr.length > 0) {
             let current = stack.pop();
             let rule = map.get(current);
     
-            if (typeof rule === 'object') { // Si es un símbolo no terminal
+            if (typeof rule === 'object') { 
                 for (const key in rule) {
-                    stack.push(rule[key]); // Añade sus producciones a la pila
+                    stack.push(rule[key]); 
                 }
-            } else if (current === "L" || current === "D") { // Para los casos de letras y dígitos
+            } else if (current === "L" || current === "D") { 
                 let nextChar = arr.shift();
                 if ((current === "L" && !letters.includes(nextChar)) || 
                     (current === "D" && !numbers.includes(nextChar))) {
                     return false;
                 }
-            } else if (typeof rule === 'string') { // Para símbolos terminales como "==", "=>", etc.
+            } else if (typeof rule === 'string') { 
                 let nextChar = arr.shift();
                 if (nextChar !== rule) {
                     return false;
                 }
-            } else if (current === "=" || current === "{" || current === "}") { // Otros símbolos terminales específicos
+            } else if (current === "=" || current === "{" || current === "}") { 
                 let nextChar = arr.shift();
                 if (nextChar !== current) {
                     return false;
@@ -539,7 +559,7 @@ class Stack {
             }
         }
     
-        return arr.length === 0 && stack.isEmpty(); // Asegúrate de que la entrada y la pila estén vacías al final
+        return arr.length === 0 && stack.isEmpty(); 
     }
     
   
@@ -548,23 +568,22 @@ class Stack {
             let current = stack.pop();
             rule = map.get(current);
     
-            if (typeof rule === 'object') { // Si es un símbolo no terminal
+            if (typeof rule === 'object') { 
                 for (const key in rule) {
-                    stack.push(rule[key]); // Añade sus producciones a la pila
+                    stack.push(rule[key]); 
                 }
-            } else if (current === "L" || current === "D") { // Para los casos de letras y dígitos
+            } else if (current === "L" || current === "D") { 
                 let nextChar = arr.shift();
                 if ((current === "L" && !letters.includes(nextChar)) || 
                     (current === "D" && !numbers.includes(nextChar))) {
                     return false;
                 }
-            } else if (typeof rule === 'string') { // Para símbolos terminales como "==", "=>", etc.
+            } else if (typeof rule === 'string') { 
                 let nextChar = arr.shift();
                 if (nextChar !== rule) {
                     return false;
                 }
             } else if (current === "=" || current === "{" || current === "}" || current === ")") { 
-                // Otros símbolos terminales específicos
                 let nextChar = arr.shift();
                 if (nextChar !== current) {
                     return false;
@@ -572,83 +591,80 @@ class Stack {
             }
         }
     
-        return arr.length === 0 && stack.isEmpty(); // Asegúrate de que la entrada y la pila estén vacías al final
+        return arr.length === 0 && stack.isEmpty();
     }
     
   
     function cycle() {
-        stack.push("CI"); // Inicia con la regla para ciclos
+        stack.push("CI"); 
     
         while (!stack.isEmpty() && arr.length > 0) {
             let current = stack.pop();
             let rule = map.get(current);
     
-            if (typeof rule === 'object') { // Si es un símbolo no terminal
+            if (typeof rule === 'object') { 
                 for (const key in rule) {
-                    stack.push(rule[key]); // Añade sus producciones a la pila
+                    stack.push(rule[key]); 
                 }
-            } else if (current === "L" || current === "D") { // Para los casos de letras y dígitos
+            } else if (current === "L" || current === "D") { 
                 let nextChar = arr.shift();
                 if ((current === "L" && !letters.includes(nextChar)) || 
                     (current === "D" && !numbers.includes(nextChar))) {
                     return false;
                 }
-            } else if (typeof rule === 'string') { // Para símbolos terminales como "==", "=>", etc.
+            } else if (typeof rule === 'string') { 
                 let nextChar = arr.shift();
                 if (nextChar !== rule) {
                     return false;
                 }
             } else if (current === "=" || current === "{" || current === "}" || current === "(" || current === ")") { 
-                // Otros símbolos terminales específicos
                 let nextChar = arr.shift();
                 if (nextChar !== current) {
                     return false;
                 }
             } else {
-                // Si el símbolo actual no se maneja, devuelve falso
+                
                 return false;
             }
         }
     
-        return arr.length === 0 && stack.isEmpty(); // Asegúrate de que la entrada y la pila estén vacías al final
+        return arr.length === 0 && stack.isEmpty(); 
     }
     
   
     function functions() {
-        stack.push("IN"); // Inicia con la regla para funciones
+        stack.push("IN"); 
     
         while (!stack.isEmpty() && arr.length > 0) {
             let current = stack.pop();
             let rule = map.get(current);
     
-            if (typeof rule === 'object') { // Si es un símbolo no terminal
+            if (typeof rule === 'object') { 
                 for (const key in rule) {
-                    stack.push(rule[key]); // Añade sus producciones a la pila
+                    stack.push(rule[key]); 
                 }
-            } else if (current === "L" || current === "D") { // Para los casos de letras y dígitos
+            } else if (current === "L" || current === "D") { 
                 let nextChar = arr.shift();
                 if ((current === "L" && !letters.includes(nextChar)) || 
                     (current === "D" && !numbers.includes(nextChar))) {
                     return false;
                 }
-            } else if (typeof rule === 'string') { // Para símbolos terminales como "==", "=>", etc.
+            } else if (typeof rule === 'string') { 
                 let nextChar = arr.shift();
                 if (nextChar !== rule) {
                     return false;
                 }
             } else if (current === "=" || current === "{" || current === "}" || current === "(" || current === ")") { 
-                // Otros símbolos terminales específicos
                 let nextChar = arr.shift();
                 if (nextChar !== current) {
                     return false;
                 }
             } else {
-                // Si el símbolo actual no se maneja, devuelve falso
                 return false;
             }
         }
     
-        return arr.length === 0 && stack.isEmpty(); // Asegúrate de que la entrada y la pila estén vacías al final
+        return arr.length === 0 && stack.isEmpty(); 
     }
     
   
