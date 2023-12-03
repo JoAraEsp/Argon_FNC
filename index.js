@@ -426,17 +426,16 @@ class Stack {
     function tokenize(input) {
         const tokens = [];
         const keywords = ["int", "string", "float", "bool", "char", "true", "false", "assuming"];
-        const delimiters = [" ", ";", "=", "{", "}", "(", ")", ".", ":"];
         let currentToken = "";
 
         for (let i = 0; i < input.length; i++) {
-            if (delimiters.includes(input[i])) {
+            currentToken += input[i];
+
+            if (keywords.includes(currentToken) || [" ", ";", "=", "{", "}", "(", ")", ".", ":"].includes(input[i])) {
                 if (currentToken.trim()) {
                     tokens.push(currentToken.trim());
+                    currentToken = "";
                 }
-                currentToken = "";
-            } else {
-                currentToken += input[i];
             }
         }
 
@@ -447,12 +446,13 @@ class Stack {
         return tokens;
     }
 
-  
+
   function validate() {
     stack.clear();
     let str = document.getElementById("textarea").value;
-    arr = tokenize('str'); 
-    let option = document.getElementById("option").value;
+    arr = tokenize(str);
+
+    let option = document.getElementById("option").value; // Asegúrate de obtener el valor de la opción seleccionada
     let result = false;
 
     switch (option) {
@@ -504,22 +504,11 @@ class Stack {
                     (current === "D" && !numbers.includes(nextChar))) {
                     return false;
                 }
-            } else if (current === "=" || current === ":" || current === "int" || 
-                    current === "float" || current === "string" || current === "bool" || 
-                    current === "char" || current === "true" || current === "false") {
+            } else if (typeof rule === 'string') {
                 let nextChar = arr.shift();
                 if (nextChar !== current) {
                     return false;
                 }
-            } else if (current === ";") {
-                return arr.length === 0;
-            } else if (rule instanceof RegExp) {
-                let nextChar = arr.shift();
-                if (!rule.test(nextChar)) {
-                    return false;
-                }
-            } else if (current === " ") {
-                continue;
             } else {
                 return false;
             }
@@ -527,8 +516,6 @@ class Stack {
 
         return arr.length === 0 && stack.isEmpty();
     }
-
-
 
     function structControl() {
         stack.push("R");  
