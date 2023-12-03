@@ -490,15 +490,23 @@ class Stack {
                 if (nextChar !== current) {
                     return false;
                 }
-            } else if (typeof rule === 'string') { // Otros casos de terminales (expresiones regulares)
+            } else if (typeof rule === 'string' || rule instanceof RegExp) { 
                 let nextChar = arr.shift();
-                if (!rule.test(nextChar)) {
+                if (rule instanceof RegExp) {
+                    if (!rule.test(nextChar)) {
+                        return false;
+                    } else {
+                        if (nextChar !== rule) {
+                            return false;
+                        }
+                    }
+                } else {
                     return false;
                 }
             }
         }
 
-        return arr.length === 0 && stack.isEmpty(); // Asegúrate de que la entrada y la pila estén vacías al final
+        return arr.length === 0 && stack.isEmpty(); 
     }
 
     function structControl() {
