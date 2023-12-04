@@ -3,9 +3,6 @@ import Stack from "./Stack.js";
 const btn = document.getElementById('btn');
 const stack = new Stack();
 const rules = new Map();
-let arr = [];
-const FFP = "++)[contenido]";
-const FFL = "--)[contenido]"
 
 rules.set("A", {TV: "TV", E: "E"});
 rules.set("E", {I: "I", DV: "DV"});
