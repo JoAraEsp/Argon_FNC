@@ -1,676 +1,416 @@
-class Stack {
-    constructor() {
-      this.items = [];
-    }
-  
-    // Añadir un elemento a la cima de la pila
-    push(element) {
-      this.items.push(element);
-    }
-  
-    // Quitar el elemento de la cima de la pila
-    pop() {
-      if (this.items.length === 0) {
-        return "Underflow";
-      }
-      return this.items.pop();
-    }
-  
-    // Ver el elemento en la cima de la pila
-    peek() {
-      return this.items[this.items.length - 1];
-    }
-  
-    // Comprobar si la pila está vacía
-    isEmpty() {
-      return this.items.length === 0;
-    }
-  
-    // Obtener el tamaño de la pila
-    size() {
-      return this.items.length;
-    }
-  
-    // Imprimir los elementos de la pila
-    printStack() {
-      let str = "";
-      for (let i = 0; i < this.items.length; i++) {
-        str += this.items[i] + " ";
-      }
-      return str;
-    }
-  
-    get() {
-      return this.items.slice().reverse();
-    }
-  
-    clear() {
-      this.items = [];
-    }
-  }
-  
-  const letters = ["a","b","c","d","e","f","g","h","i","j","k","l",
-    "m","n","ñ","o","p","q","r","s","t","u","v","w","x","y","z"];
-  
-  const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-  let stack = new Stack();
-  
-  const map = new Map();
-        map.set("A", {
-        TV: "TV",
-        E: "E",
-        });
-        map.set("E", {
-        I: "I",
-        DV: "DV",
-        });
-        map.set("DV", {
-        NV: "NV",
-        PV: "PV",
-        });
-        map.set("PV", {
-        DP: "DP",
-        O: "O",
-        });
-        map.set("NV", {
-        L: "L",
-        RL: "RL",
-        });
+import Stack from "./Stack.js";
 
-        map.set("O", {
-        L: "L",
-        RL: "RL",
-        D: "D",
-        RD: "RD",
-        PD: "PD",
-        true: true,
-        false: false,
-        });
-        map.set("TV", {
-        TN: "TN",
-        TL: "TL",
-        });
-        map.set("TN", {
-        B1: "B1",
-        B2: "B2",
-        });
-        map.set("B1", "int");
-        map.set("B2", "float");
-        map.set("TL", {
-        LC: "LC",
-        LV: "LV",
-        });
-        map.set("LC", {
-        F1: "F1",
-        F2: "F2",
-        });
-        map.set("F1", "string");
-        map.set("F2", "bool");
-        map.set("LV", "char");
-        map.set("P", ".");
-        map.set("DP", ":");
-        map.set("I", "=");
-        map.set("L", /^[a-z]+$/);
-        map.set("D", /[0-9]/);
-        map.set("B", {
-        C1: "C1",
-        C2: "C2",
-        });
-        map.set("C1", "true");
-        map.set("C2", "false");
-        map.set("RL", {
-        L: "L",
-        RL: "RL",
-        });
-        map.set("RD", {
-        D: "D",
-        RD: "RD",
-        });
-        map.set("PD", {
-        RD: "RD",
-        DP: "DP",
-        });
-        map.set("DPD", {
-        D: "D",
-        RD: "RD",
-        });
-        map.set("IN", {
-        DF: "DF",
-        RD: "RD",
-        });
-        map.set("DF", "Fn");
-        map.set("RD", {
-        L: "L",
-        G1: "G1",
-        });
-        map.set("G1", {
-        RL: "RL",
-        G2: "G2",
-        });
-        map.set("G2", {
-        PA: "PA",
-        G3: "G3",
-        });
-        map.set("G3", {
-        PC: "PC",
-        G4: "G4",
-        });
-        map.set("G4", {
-        DP: "DP",
-        G5: "G5",
-        });
-        map.set("G5", {
-        LA: "LA",
-        G6: "G6",
-        });
-        map.set("G6", {
-        LC: "LC",
-        });
-        map.set("R", {
-        C: "C",
-        J1: "J1",
-        });
-        map.set("J1", {
-        DP: "DP",
-        J2: "J2",
-        });
-        map.set("J2", {
-        LA: "LA",
-        J3: "J3",
-        });
-        map.set("J3", {
-        CO: "CO",
-        J4: "J4",
-        });
-        map.set("J4", {
-        LC: "LC",
-        E: "E",
-        });
-        map.set("C", {
-        L: "L",
-        K1: "K1",
-        });
-        map.set("K1", {
-        RL: "RL",
-        K2: "K2",
-        });
-        map.set("K2", {
-        O: "O",
-        OP: "OP",
-        });
-        map.set("O", {
-        "==": "==",
-        "=>": "=>",
-        "<=": "<=",
-        "!=": "!=",
-        ">": ">",
-        "<": "<",
-        });
-        map.set("OP", {
-        D: "D",
-        RD: "RD",
-        C1: "C1",
-        C2: "C2",
-        L: "L",
-        });
-        map.set("LA", "{");
-        map.set("LC", "}");
-        map.set("CI", "loop");
-        map.set("CA", {
-        PA: "PA",
-        NA: "NA",
-        });
-        map.set("NA", {
-        LL: "LL",
-        NO: "NO",
-        });
-        map.set("LL", {
-        L: "L",
-        RL: "RL",
-        });
-        map.set("NO", {
-        O: "O",
-        OP: "OP",
-        });
-        map.set("IC", {
-        DP: "DP",
-        DC: "DC",
-        });
-        map.set("DC", {
-        LA: "LA",
-        DF: "DF",
-        });
-        map.set("CI", "loop");
-        map.set("R", {
-        PA: "PA",
-        CA: "CA",
-        });
-        map.set("CA", {
-        NA: "NA",
-        IC: "IC",
-        });
-        map.set("PA", "(");
-        map.set("PC", ")");
-        map.set("LA", "{");
-        map.set("LC", "}");
-        map.set("CO", "Contenido");
-        map.set("IF", "assuming");
-        map.set("R", {
-        C: "C",
-        J1: "J1",
-        });
-        map.set("J1", {
-        DP: "DP",
-        J2: "J2",
-        });
-        map.set("J2", {
-        LA: "LA",
-        J3: "J3",
-        });
-        map.set("J3", {
-        CO: "CO",
-        J4: "J4",
-        });
-        map.set("J4", {
-        LC: "LC",
-        E: "E",
-        });
-        map.set("C", {
-        L: "L",
-        K1: "K1",
-        });
-        map.set("K1", {
-        RL: "RL",
-        K2: "K2",
-        });
-        map.set("K2", {
-        O: "O",
-        OP: "OP",
-        });
-        map.set("O", {
-        "==": "==",
-        "=>": "=>",
-        "<=": "<=",
-        "!=": "!=",
-        ">": ">",
-        "<": "<",
-        });
-        map.set("OP", {
-        D: "D",
-        RD: "RD",
-        C1: "C1",
-        C2: "C2",
-        L: "L",
-        });
-        map.set("L", /^[a-z]+$/);
-        map.set("RL", {
-        L: "L",
-        RL: "RL",
-        });
-        map.set("LA", "{");
-        map.set("LC", "}");
-        map.set("DP", ":");
-        map.set("P", ".");
-        map.set("CO", "Contenido");
-        map.set("D", /[0-9]/);
-        map.set("RD", {
-        D: "D",
-        RD: "RD",
-        });
-        map.set("IN", {
-        I: "I",
-        R: "R",
-        });
-        map.set("I", "assuming");
-        map.set("R", {
-        C: "C",
-        J1: "J1",
-        });
-        map.set("J1", {
-        DP: "DP",
-        J2: "J2",
-        });
-        map.set("J2", {
-        LA: "LA",
-        J3: "J3",
-        });
-        map.set("J3", {
-        CO: "CO",
-        J4: "J4",
-        });
-        map.set("J4", {
-        LC: "LC",
-        E: "E",
-        });
-        map.set("C", {
-        L: "L",
-        K1: "K1",
-        });
-        map.set("K1", {
-        RL: "RL",
-        K2: "K2",
-        });
-        map.set("K2", {
-        O: "O",
-        OP: "OP",
-        });
-        map.set("O", {
-        "==": "==",
-        "=>": "=>",
-        "<=": "<=",
-        "!=": "!=",
-        ">": ">",
-        "<": "<",
-        });
-        map.set("OP", {
-        D: "D",
-        RD: "RD",
-        C1: "C1",
-        C2: "C2",
-        L: "L",
-        });
-        map.set("PA", "(");
-        map.set("CA", {
-        NA: "NA",
-        IC: "IC",
-        });
-        map.set("NA", {
-        LL: "LL",
-        NO: "NO",
-        });
-        map.set("LL", {
-        L: "L",
-        RL: "RL",
-        });
-        map.set("NO", {
-        O: "O",
-        OP: "OP",
-        });
-        map.set("IC", {
-        DP: "DP",
-        DC: "DC",
-        });
-        map.set("DC", {
-        LA: "LA",
-        DF: "DF",
-        });
-        map.set("L", /^[a-z]+$/);
-        map.set("G1", {
-        RL: "RL",
-        G2: "G2",
-        });
-        map.set("G2", {
-        PA: "PA",
-        G3: "G3",
-        });
-        map.set("G3", {
-        PC: "PC",
-        G4: "G4",
-        });
-        map.set("G4", {
-        DP: "DP",
-        G5: "G5",
-        });
-        map.set("G5", {
-        LA: "LA",
-        G6: "G6",
-        });
-        map.set("G6", {
-        LC: "LC",
-        });
+const btn = document.getElementById('btn');
+const stack = new Stack();
+const rules = new Map();
+let arr = [];
+const FFP = "++)[contenido]";
+const FFL = "--)[contenido]"
 
-  
-  let arr;
-  let result;
+rules.set("A", {TV: "TV", E: "E"});
+rules.set("E", {I: "I", DV: "DV"});
+rules.set("DV", {NV: "NV", PV: "PV"});
+rules.set("PV", {DP: "DP", O: "O"});
+rules.set("NV", {L: "L", RL: "RL"});
+rules.set("O", {L: "L", RL: "RL", D: "D", RD: "RD", true: "true", false: "false"});
+rules.set("TV", {TN: "TN", TL: "TL"});
+rules.set("TN", {B1: "B1", B2: "B2"});
+rules.set("B1", {int: "int"});
+rules.set("B2", {float: "float"});
+rules.set("TL", {LC: "LC", LV: "LV"});
+rules.set("LC", {F1: "F1", F2: "F2"});
+rules.set("F1", {string: "string"});
+rules.set("F2", {bool: "bool"});
+rules.set("LV", {char: "char"});
+rules.set("P", ".");
+rules.set("DP", ":");
+rules.set("I", "=");
+rules.set("L", {a: "a", b: "b", c: "c", d: "d", e: "e", f: "f", g: "g", h: "h", i: "i", j: "j", k: "k", l: "l", m: "m", n: "n", o: "o", p: "p", q: "q", r: "r", s: "s", t: "t", u: "u", v: "v", w: "w", x: "x", y: "y", z: "z", A: "A", B: "B", C: "C", D: "D", E: "E", F: "F", G: "G", H: "H", I: "I", J: "J", K: "K", L: "L", M: "M", N: "N", O: "O", P: "P", Q: "Q", R: "R", S: "S", T: "T", U: "U", V: "V", W: "W", X: "X", Y: "Y", Z: "Z"});
+rules.set("D", {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9"});
+rules.set("B", {C1: "C1", C2: "C2"});
+rules.set("C1", "true");
+rules.set("C2", "false");
+rules.set("RL", {L: "L", RL: "RL", "": ""});
+rules.set("RD", {D: "D", RD: "RD", "": ""});
+rules.set("PD", {RD: "RD", DP: "DP"});
+rules.set("DP", {P: "P", D: "D", DPD: "DPD"});
+rules.set("DPD", {D: "D", RD: "RD"});
+rules.set("IN", {DF: "DF", RD: "RD"});
+rules.set("DF", {Fn: "Fn"});
+rules.set("RD", {L: "L", G1: "G1"});
+rules.set("G1", {RL: "RL", G2: "G2"});
+rules.set("G2", {PA: "PA", G3: "G3"});
+rules.set("G3", {PC: "PC", G4: "G4"});
+rules.set("G4", {DP: "DP", G5: "G5"});
+rules.set("G5", {LA: "LA", G6: "G6"});
+rules.set("G6", {CO: "CO", LC: "LC"});
+rules.set("PA", "(");
+rules.set("PC",  ")");
+rules.set("LA",  "{");
+rules.set("LC", "}");
+rules.set("CO", {Contenido: "Contenido"});
+rules.set("I", {assuming: "assuming"});
+rules.set("C", {L: "L", K1: "K1"});
+rules.set("K1", {RL: "RL", K2: "K2"});
+rules.set("K2", {O: "O", OP: "OP"});
+rules.set("OP", {D: "D", RD: "RD", C1: "C1", C2: "C2", L: "L", RL: "RL"});
+rules.set("M", {O1: "O1", M1: "M1"});
+rules.set("O1", {otherwise: "otherwise"});
+rules.set("M1", {DP: "DP", M2: "M2"});
+rules.set("M2", {LA: "LA", M3: "M3"});
+rules.set("M3", {CO: "CO", LC: "LC"});
+rules.set("L", {a: "a", b: "b", c: "c", d: "d", e: "e", f: "f", g: "g", h: "h", i: "i", j: "j", k: "k", l: "l", m: "m", n: "n", o: "o", p: "p", q: "q", r: "r", s: "s", t: "t", u: "u", v: "v", w: "w", x: "x", y: "y", z: "z", A: "A", B: "B", C: "C", D: "D", E: "E", F: "F", G: "G", H: "H", I: "I", J: "J", K: "K", L: "L", M: "M", N: "N", O: "O", P: "P", Q: "Q", R: "R", S: "S", T: "T", U: "U", V: "V", W: "W", X: "X", Y: "Y", Z: "Z"});
+rules.set("RL", {L: "L", RL: "RL", "": ""});
+rules.set("LA", "{");
+rules.set("LC", "}");
+rules.set("DP", ":");
+rules.set("P", ".");
+rules.set("CO", {Contenido: "Contenido"});
+rules.set("D", {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9"});
+rules.set("RD", {D: "D", RD: "RD", "": ""});
+rules.set("IN", {CI: "CI", "R": "R"});
+rules.set("CI", {loop: "loop"});
+rules.set("R", {PA: "PA", CA: "CA"});
+rules.set("CA", {NA: "NA", IC: "IC"});
+rules.set("NA", {LL: "LL", NO: "NO"});
+rules.set("LL", {L: "L", RL: "RL"});
+rules.set("NO", {O: "O", OP: "OP"});
+rules.set("IC", {DP: "DP", DC: "DC"});
+rules.set("DC", {LA: "LA", DF: "DF"});
+rules.set("DF", {CO: "CO", LC: "LC"});
+rules.set("L", {a: "a", b: "b", c: "c", d: "d", e: "e", f: "f", g: "g", h: "h", i: "i", j: "j", k: "k", l: "l", m: "m", n: "n", o: "o", p: "p", q: "q", r: "r", s: "s", t: "t", u: "u", v: "v", w: "w", x: "x", y: "y", z: "z", A: "A", B: "B", C: "C", D: "D", E: "E", F: "F", G: "G", H: "H", I: "I", J: "J", K: "K", L: "L", M: "M", N: "N", O: "O", P: "P", Q: "Q", R: "R", S: "S", T: "T", U: "U", V: "V", W: "W", X: "X", Y: "Y", Z: "Z"});
+rules.set("RL", {L: "L", RL: "RL", "": ""});
+rules.set("D", {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9"});
+rules.set("O", {"==": "==", "=>": "=>", "<=": "<=", "!=": "!=", ">": ">", "<": "<"});
+rules.set("OP", {D: "D", RD: "RD", C1: "C1", C2: "C2", L: "L", RL: "RL"});
+rules.set("PA",  "(");
+rules.set("PC", ")");
+rules.set("DP", ":");
+rules.set("LA", "{");
+rules.set("LC", "}");
+rules.set("CO", {Contenido: "Contenido"});
 
-    function tokenize(input) {
-        const tokens = [];
-        const keywords = ["int", "string", "float", "bool", "char", "true", "false", "assuming"];
-        let currentToken = "";
-
-        for (let i = 0; i < input.length; i++) {
-            currentToken += input[i];
-
-            if (keywords.includes(currentToken) || [" ", ";", "=", "{", "}", "(", ")", ".", ":"].includes(input[i])) {
-                if (currentToken.trim()) {
-                    tokens.push(currentToken.trim());
-                    currentToken = "";
-                }
-            }
-        }
-
-        if (currentToken.trim()) {
-            tokens.push(currentToken.trim());
-        }
-
-        return tokens;
-    }
-
-
-  function validate() {
-    stack.clear();
-    let str = document.getElementById("textarea").value;
-    arr = tokenize(str);
-
-    let option = document.getElementById("option").value; // Asegúrate de obtener el valor de la opción seleccionada
-    let result = false;
-
-    switch (option) {
+function validate(){
+    stack.clear()
+    switch(document.getElementById('type').value){
         case "Variable":
-            stack.push("A"); 
-            result = variable(); 
+            validateVariables();
             break;
-        case "Estructura de control":
-            stack.push("IN"); 
-            result = structControl(); 
+        case "If":
+            validateIf();
             break;
-        case "Ciclo":
-            stack.push("CI"); 
-            result = cycle(); 
+        case "For":
+            validateLoop();
             break;
         case "Funcion":
-            stack.push("DF"); 
-            result = functions(); 
+            validateFn();
             break;
         default:
-            alert("Opción no válida");
-            return;
+            alert("Selecciona una opción");
+            break;
     }
-
-    if (result) {
-        alert("Es una cadena válida");
-    } else {
-        alert("No es una cadena válida");
-    }
-
-    paint(); 
+    drawStack();
 }
 
-    function variable() {
-        console.log(arr);
-        stack.push("DV");
+function validateVariables() {
+    stack.clear();
+    let input = document.getElementById('str').value;
+    let arr = input.split(/\s+/);
+    stack.push("A");
 
-        while (!stack.isEmpty() && arr.length > 0) {
-            let current = stack.pop();
-            let rule = map.get(current);
+    let tipoDato = arr[0];
+    let categoriaTipoDato = (tipoDato === "int" || tipoDato === "float") ? "TN" : "TL";
+    stack.push("TV");
+    stack.push(categoriaTipoDato);
 
-            if (typeof rule === 'object') {
-                for (const key in rule) {
-                    stack.push(rule[key]);
-                }
-            } else if (current === "L" || current === "D") {
-                let nextChar = arr.shift();
-                if ((current === "L" && !letters.includes(nextChar)) ||
-                    (current === "D" && !numbers.includes(nextChar))) {
-                    return false;
-                }
-            } else if (typeof rule === 'string') {
-                let nextChar = arr.shift();
-                if (nextChar !== current) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+    let subCategoria;
+    if (categoriaTipoDato === "TN") {
+        subCategoria = (tipoDato === "int") ? "B1" : "B2";
+    } else { 
+        if (tipoDato === "string") {
+            subCategoria = "F1";
+        } else if (tipoDato === "bool") {
+            subCategoria = "F2";
+        } else { 
+            subCategoria = "LV";
         }
+        stack.push("LC");
+    }
+    stack.push(subCategoria);
+    
+    let identificador = arr[1];
+    let ruleIdentificador = rules.get("NV");
+    let ruleLetra = rules.get("L");
 
-        return arr.length === 0 && stack.isEmpty();
+    if (ruleIdentificador && ruleLetra[identificador[0]]) {
+        stack.push("NV");
+        stack.push("L");
+    } else {
+        console.log("Error: Identificador no válido");
+        alert("Identificador no válido")
+        return;
     }
 
-    function structControl() {
-        stack.push("R");  
-        while (!stack.isEmpty() && arr.length > 0) {
-            let current = stack.pop();
-            let rule = map.get(current);
-    
-            if (typeof rule === 'object') { 
-                for (const key in rule) {
-                    stack.push(rule[key]); 
-                }
-            } else if (current === "L" || current === "D") { 
-                let nextChar = arr.shift();
-                if ((current === "L" && !letters.includes(nextChar)) || 
-                    (current === "D" && !numbers.includes(nextChar))) {
-                    return false;
-                }
-            } else if (typeof rule === 'string') { 
-                let nextChar = arr.shift();
-                if (nextChar !== rule) {
-                    return false;
-                }
-            } else if (current === "=" || current === "{" || current === "}") { 
-                let nextChar = arr.shift();
-                if (nextChar !== current) {
-                    return false;
-                }
+    if (arr[2] !== "=") {
+        console.log("Error: Se esperaba '='");
+        alert("Se esperaba =")
+        return;
+    } else {
+        stack.push("E");
+        stack.push("I");
+    }
+
+    validateValue(tipoDato, arr[3]);
+
+    console.log("Cadena válida");
+    alert("Cadena válida");
+}
+
+function validateValue(type, value) {
+    switch (type) {
+        case "int":
+            if (!/^\d+$/.test(value)) {
+                console.log("Error: Valor no válido para int");
+                alert("Valor no válido dado el tipo");
+                return;
             }
-        }
+            stack.push("DV");
+            stack.push("NV");
+            stack.push("PV");
+            stack.push("DP");
+            stack.push("O");
+            stack.push("D");
+            stack.push("RD");
+            break;
+        case "float":
+            if (!/^\d+\.\d+$/.test(value)) {
+                console.log("Error: Valor no válido para float");
+                alert("Valor no válido dado el tipo");
+                return;
+            }
+            stack.push("DV");
+            stack.push("NV");
+            stack.push("PV");
+            stack.push("DP");
+            stack.push("O");
+            stack.push("D");
+            stack.push("DPD");
+            break;
+        case "string":
+            if (!/^".*"$/.test(value)) {
+                console.log("Error: Valor no válido para string");
+                alert("Valor no válido dado el tipo");
+                return;
+            }
+            stack.push("DV");
+            stack.push("NV");
+            stack.push("PV");
+            stack.push("DP");
+            stack.push("O");
+            stack.push("F1");
+            break;
+        case "bool":
+            if (!["true", "false"].includes(value)) {
+                console.log("Error: Valor no válido para bool");
+                alert("Valor no válido dado el tipo");
+                return;
+            }
+            stack.push("DV");
+            stack.push("NV");
+            stack.push("PV");
+            stack.push("DP");
+            stack.push("O");
+            stack.push("F2");
+            break;
+        case "char":
+            if (!/^'.'$/.test(value)) {
+                console.log("Error: Valor no válido para char");
+                alert("Valor no válido dado el tipo");
+                return;
+            }
+            stack.push("DV");
+            stack.push("NV");
+            stack.push("PV");
+            stack.push("DP");
+            stack.push("O");
+            stack.push("LV");
+            break;
+    }
+}
+
+
+function validateIf() {
+    stack.clear();
+    let input = document.getElementById('str').value;
     
-        return arr.length === 0 && stack.isEmpty(); 
+    let blocks = input.split(/(assuming|otherwise)/);
+
+    if (!blocks[1] || blocks[1].trim() !== "assuming" || !blocks[2]) {
+        console.log("Error: Se esperaba 'assuming'");
+        alert("Se esperaba assuming");
+        return;
+    }
+    validateCondition(blocks[2].trim().split(/\s+/)); 
+
+    stack.push("LA");
+    stack.push("CO");
+    stack.push("LC");
+
+    if (!blocks[3] || blocks[3].trim() !== "otherwise" || !blocks[4]) {
+        console.log("Error: Se esperaba 'otherwise'");
+        alert("Se esperaba otherwise");
+        return;
+    }
+    stack.push("O1");
+    stack.push("LA");
+    stack.push("CO");
+    stack.push("LC");
+
+    console.log("Cadena válida");
+    alert("Cadena válida");
+}
+
+
+function validateCondition(condParts) {
+    if (condParts.length !== 3) {
+        return;
     }
     
-  
-    function variableOfEC(rule) {
-        while (!stack.isEmpty() && arr.length > 0) {
-            let current = stack.pop();
-            rule = map.get(current);
-    
-            if (typeof rule === 'object') { 
-                for (const key in rule) {
-                    stack.push(rule[key]); 
-                }
-            } else if (current === "L" || current === "D") { 
-                let nextChar = arr.shift();
-                if ((current === "L" && !letters.includes(nextChar)) || 
-                    (current === "D" && !numbers.includes(nextChar))) {
-                    return false;
-                }
-            } else if (typeof rule === 'string') { 
-                let nextChar = arr.shift();
-                if (nextChar !== rule) {
-                    return false;
-                }
-            } else if (current === "=" || current === "{" || current === "}" || current === ")") { 
-                let nextChar = arr.shift();
-                if (nextChar !== current) {
-                    return false;
-                }
-            }
-        }
-    
-        return arr.length === 0 && stack.isEmpty();
+    let variable = condParts[0];
+    let ruleL = rules.get("L");
+    if (!ruleL[variable[0]]) { 
+        console.log("Error: Variable no válida en la condición");
+        return;
+    }
+    stack.push("C");
+    stack.push("L");
+
+    let operador = condParts[1];
+    let ruleO = rules.get("O");
+    if (!ruleO[operador]) {
+        console.log("Error: Operador no válido en la condición");
+        return;
+    }
+    stack.push("O");
+
+    let numero = condParts[2];
+    let ruleD = rules.get("D");
+    if (!ruleD[numero]) {
+        console.log("Error: Número no válido en la condición");
+        return;
+    }
+    stack.push("D");
+}
+
+function validateLoop() {
+    stack.clear();
+    let input = document.getElementById('str').value;
+    let arr = input.split(/[\s(){}]+/); 
+    stack.push("IN");
+
+    if (arr[0] !== "loop") {
+        console.log("Error: Se esperaba 'loop'");
+        alert("Se esperaba loop");
+        return;
+    }
+    stack.push("CI");
+
+    stack.push("R");
+    stack.push("PA");
+
+    validateLoopCondition(arr.slice(1, 4)); 
+
+    stack.push("PC");
+    stack.push("LA");
+    stack.push("CO");
+    stack.push("LC");
+
+    console.log("Cadena válida");
+    alert("Cadena válida");
+}
+
+function validateLoopCondition(condParts) {
+    if (condParts.length !== 3) {
+        console.log("Error: Condición del bucle mal formada");
+        return;
     }
     
-  
-    function cycle() {
-        stack.push("CI"); 
-    
-        while (!stack.isEmpty() && arr.length > 0) {
-            let current = stack.pop();
-            let rule = map.get(current);
-    
-            if (typeof rule === 'object') { 
-                for (const key in rule) {
-                    stack.push(rule[key]); 
-                }
-            } else if (current === "L" || current === "D") { 
-                let nextChar = arr.shift();
-                if ((current === "L" && !letters.includes(nextChar)) || 
-                    (current === "D" && !numbers.includes(nextChar))) {
-                    return false;
-                }
-            } else if (typeof rule === 'string') { 
-                let nextChar = arr.shift();
-                if (nextChar !== rule) {
-                    return false;
-                }
-            } else if (current === "=" || current === "{" || current === "}" || current === "(" || current === ")") { 
-                let nextChar = arr.shift();
-                if (nextChar !== current) {
-                    return false;
-                }
-            } else {
-                
-                return false;
-            }
-        }
-    
-        return arr.length === 0 && stack.isEmpty(); 
+    let variable = condParts[0];
+    let ruleL = rules.get("L");
+    if (!ruleL[variable]) {
+        return;
     }
-    
-  
-    function functions() {
-        stack.push("IN"); 
-    
-        while (!stack.isEmpty() && arr.length > 0) {
-            let current = stack.pop();
-            let rule = map.get(current);
-    
-            if (typeof rule === 'object') { 
-                for (const key in rule) {
-                    stack.push(rule[key]); 
-                }
-            } else if (current === "L" || current === "D") { 
-                let nextChar = arr.shift();
-                if ((current === "L" && !letters.includes(nextChar)) || 
-                    (current === "D" && !numbers.includes(nextChar))) {
-                    return false;
-                }
-            } else if (typeof rule === 'string') { 
-                let nextChar = arr.shift();
-                if (nextChar !== rule) {
-                    return false;
-                }
-            } else if (current === "=" || current === "{" || current === "}" || current === "(" || current === ")") { 
-                let nextChar = arr.shift();
-                if (nextChar !== current) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-    
-        return arr.length === 0 && stack.isEmpty(); 
+    stack.push("NA");
+    stack.push("LL");
+    stack.push("L");
+
+    let operador = condParts[1];
+    let ruleO = rules.get("O");
+    if (!ruleO[operador]) {
+        return;
     }
-    
-  
-  function paint() {
+    stack.push("O");
+
+    let numero = condParts[2];
+    let ruleD = rules.get("D");
+    if (!ruleD[numero]) {
+        return;
+    }
+    stack.push("D");
+}
+
+
+function validateFn() {
+    stack.clear();
+    let input = document.getElementById('str').value;
+    let arr = input.split(/[\s(){}]+/); 
+    stack.push("IN");
+
+    if (arr[0] !== "Fn") {
+        console.log("Error: Se esperaba 'Fn'");
+        alert("Se esperaba Fn");
+        return;
+    }
+    stack.push("DF");
+
+    let functionName = arr[1];
+    let ruleL = rules.get("L");
+    let ruleRL = rules.get("RL");
+    if (!ruleL[functionName[0]] || (functionName.length > 1 && !ruleRL[functionName.substring(1)])) {
+        console.log("Error: Nombre de función no válido");
+        alert("Función no válida");
+        return;
+    }
+    stack.push("RD");
+    stack.push("L");
+    stack.push("G1");
+
+    stack.push("G2");
+    stack.push("PA");
+    stack.push("G3");
+    stack.push("PC");
+
+    stack.push("G4");
+    stack.push("G5");
+    stack.push("LA");
+    stack.push("G6");
+    stack.push("CO");
+    stack.push("LC");
+
+    console.log("Cadena válida");
+    alert("Cadena válida");
+}
+
+
+
+function drawStack() {
     const div = document.getElementById("pila");
-    const p = document.getElementById("status");
     div.innerHTML = "";
-    p.innerHTML = "";
-    if (stack.isEmpty()) {
-      p.style.color = "green"
-      p.textContent = "La pila queda vacia";
-      return;
-    }
-    div.innerHTML = "";
-    p.textContent = "Estado de la pila:"
-    p.style.color = "red"
     for (const element of stack.get()) {
-      const label = document.createElement("p");
-      label.textContent = element;
-      div.appendChild(label);
+      const p = document.createElement("p");
+      p.textContent = element;
+      div.appendChild(p);
     }
   }
+
+btn.addEventListener('click', validate);
